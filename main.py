@@ -1,16 +1,16 @@
+# main.py
 from fastapi import FastAPI
 from pydantic import BaseModel
-import numpy as np
 import joblib
+import numpy as np
 
-# Load trained XGBoost model
-model = joblib.load("xgboost_appliance_model.pkl")
-
-# Define FastAPI app
 app = FastAPI()
 
-# Pydantic model
-class Features(BaseModel):
+# Load model
+model = joblib.load("xgboost_appliance_model.pkl")
+
+# Define input schema
+class InputData(BaseModel):
     T_out: float
     RH_out: float
     Visibility: float
@@ -23,12 +23,17 @@ class Features(BaseModel):
     Appliances_roll3: float
     Appliances_roll6: float
 
-@app.get("/")
-def read_root():
-    return {"message": "Smart Home Energy Prediction API is running."}
-
 @app.post("/predict")
-def predict(data: Features):
-    features = np.array([[v for v in data.dict().values()]])
-    prediction = model.predict(features)[0]
-    return {"predicted_usage": round(prediction, 2)}
+def predict(data: InputData):
+    try:
+        features = np.array([[
+            data.T_out, data.RH_out, data.Visibility, data.Tdewpoint,
+            data.hour, data.day_of_week, data.is_weekend,
+            data.Appliances_lag1, data.Appliances_lag24,
+            data.Appliances_roll3, data.Appliances_roll6
+        ]])
+        pred = model.predict(features)[0]
+        return {"predicted_usage": float(pred)}
+    except Exception as e:
+        return {"error": str(e)}
+
