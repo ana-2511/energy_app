@@ -78,7 +78,7 @@ with tabs[2]:
     st.header("🔍 What Influences Energy Usage?")
     st.markdown("This shows which features matter most in the prediction model.")
 
-    st.image("feature_importance.png", caption="Top 10 Features from XGBoost", use_column_width=True)
+    st.image("feature_importance.png", caption="Top 10 Features from XGBoost", use_container_width=True)
 
     st.markdown("""
     **📘 Feature Meaning (in simple words):**
