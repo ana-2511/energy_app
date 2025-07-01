@@ -48,7 +48,7 @@ with tabs[0]:
 
     if st.button("⚡ Predict Energy Usage"):
         try:
-            response = requests.post("https://smart-energy-api.onrender.com/predict",
+            response = requests.post("https://energy-app-h5c9.onrender.com/predict",
                                      json=input_df.to_dict(orient="records")[0])
             if response.status_code == 200:
                 prediction = response.json()['predicted_usage']
